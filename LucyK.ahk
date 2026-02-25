@@ -5,24 +5,27 @@ k_up := 1
 k_down := 2
 k_left := 3
 k_right := 4
-
+b_uppercase := false
+b_lockcase := false
+; 				Up/Forward	Down/Back	Left 		Right
 direction := [ "{Tab}", "{Backspace}", "{Enter}", "{Space}" ]
-keymap := [
-		["e","t","a","o"],
-		["i","n","s","h"],
-		["r","d","l","c"],
-		["u","m","w","f"],
-		["g","y","p","b"],
-		["v","k","j","x"],
-		["q","z",",","."],
-		["!","?",",","."],
-		["1","2","3","4"],
-		["5","6","7","8"],
-		["9","0","-","="],
-		["[","]","{","}"],
-		["!","!","!","!"],
-		["!","!","!","!"],
-		["Up","Down","Left","Right"]
+; 					Little, Ring, Middle, Index
+keymap := [					; LRMI
+		["e","t","a","o"],  ; ---X
+		["i","n","s","h"],  ; --X-
+		["r","d","l","c"],  ; --XX
+		["u","m","w","f"],  ; -X--
+		["g","y","p","b"],  ; -X-X
+		["v","k","j","x"],  ; -XX-
+		["q","z",",","."],  ; -XXX
+		["!","?",",","."],  ; X---
+		["1","2","3","4"],  ; X--X
+		["5","6","7","8"],  ; X-X-
+		["9","0","-","="],  ; X-XX
+		["[","]","{","}"],  ; XX--
+		["?","?","?","?"],  ; XX-X
+		["?","?","?","?"],  ; XXX-
+		["Up","Down","Left","Right"]  ; XXXX
 ]
 
 ^F5::
@@ -49,14 +52,44 @@ keymap := [
 
 ^F12::TheThing(k_right)
 
+^!F5::
+{
+	global
+	b_uppercase := !b_uppercase
+	if (!b_uppercase)
+	{
+		b_lockcase := false
+	}
+}
+
+^!F6::
+{
+	global
+	b_uppercase := !b_uppercase
+	b_lockcase := !b_lockcase
+}
 
 TheThing(derp)
 {
+	global
 	nibble := UpdateOSD()
 	if (nibble > 0)
 	{
 		V := keymap[nibble][derp]
+		if (b_uppercase)
+		{
+			Send "{Shift down}"
+		}
 		Send nibble == 15 ? "{" V "}" : "{Raw}" V
+		if (b_uppercase)
+		{
+			Send "{Shift up}"
+			if (!b_lockcase)
+			{
+				b_uppercase := false
+			}
+		}
+
 	}
 	if (nibble == 0)
 	{
@@ -101,15 +134,25 @@ UpdateOSD(*)
 	{
 		nibble += 8
 	}
-    if (nibble > 0) ; && nibble < 9)
-    {
-	    V := keymap[nibble]
-	    UpText.Value := V[k_up]
-	    RtText.Value := V[k_right]
-	    LtText.Value := V[k_left]
-	    DnText.Value := V[k_down]
+	if (nibble > 0) ; && nibble < 9)
+	{
+		V := keymap[nibble]
+		if(b_uppercase)
+		{
+			UpText.Value := StrUpper(V[k_up])
+			RtText.Value := StrUpper(V[k_right])
+			LtText.Value := StrUpper(V[k_left])
+			DnText.Value := StrUpper(V[k_down])
+		}
+		else
+		{
+			UpText.Value := V[k_up]
+			RtText.Value := V[k_right]
+			LtText.Value := V[k_left]
+			DnText.Value := V[k_down]
+		}
 
-	    MyGui.Restore()
+		MyGui.Restore()
 	}
 	Else
 	{
