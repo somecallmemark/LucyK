@@ -11,7 +11,7 @@ move.png is used for the overlay, and needs to be in the same directory as the a
 
 # How do:
 
-1. Import and activate the profile in the azeron software. (lucy-cyborg.txt)
+1. Copy the text from lucy-cyborg.txt, then import and activate the profile in the azeron software.
 2. Run the AHK script. (LucyK.ahk)
 3. ???
 4. Profit.
